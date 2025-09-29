@@ -1,0 +1,387 @@
+// Theme tokens (SCSS variables for readability)
+$bg: #e9e7e5; // light canvas per screenshot
+$panel: #ffffff;
+$ink: #0d0d0d;
+$muted: #6b7280;
+$primary: #2b7ea7; // blue button tone
+$active: #2ba7be; // accent for active chevron
+$rail: #e0dedc; // light left rail
+$soft: rgba(255, 255, 255, 0.08);
+
+// Emit CSS custom properties so JS/CSS can still reference theme at runtime
+// Light theme (default)
+:root,
+:root[data-theme="light"] {
+  --bg: #{$bg};
+  --panel: #{$panel};
+  --ink: #{$ink};
+  --muted: #{$muted};
+  --primary: #{$primary};
+  --active: #{$active};
+  --rail: #{$rail};
+  --soft: #{$soft};
+}
+
+// Dark theme overrides
+:root[data-theme="dark"] {
+  --bg: #0b0c10;
+  --panel: #111827;
+  --ink: #f3f4f6;
+  --muted: #9ca3af;
+  --primary: #2563eb;
+  --active: #22c55e;
+  --rail: #0f172a;
+  --soft: rgba(255, 255, 255, 0.08);
+}
+
+// Mixins
+@mixin card-shadow {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+@mixin button-elevate {
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
+  }
+}
+
+// Global resets
+* {
+  box-sizing: border-box;
+}
+
+body,
+html,
+#root {
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+// App shell
+.app-root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 20px clamp(16px, 4vw, 32px);
+  border-bottom: 1px solid var(--soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(18px, 3.2vw, 32px);
+  }
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  color: var(--ink);
+  opacity: 0.8;
+  max-width: 720px;
+}
+
+// Layout
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 16px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  // Tablet and up
+  @media (min-width: 760px) {
+    grid-template-columns: 420px 1fr;
+    align-items: stretch;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  @media (min-width: 1120px) {
+    grid-template-columns: 480px 1fr;
+    gap: 28px;
+    padding: 28px;
+  }
+}
+
+// Left rail
+.rail {
+  background: var(--rail);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 8px;
+  overflow: hidden;
+}
+
+:root[data-theme="dark"] .rail {
+  border-color: var(--soft);
+}
+
+.thumb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.thumb-item {
+  +.thumb-item {
+    border-top: 1px solid var(--soft);
+  }
+
+  &.active {
+    .name {
+      color: var(--ink);
+    }
+
+    .chevron {
+      transform: rotate(90deg);
+    }
+
+    .chev-bg {
+      fill: var(--primary);
+    }
+
+    .chev-arrow {
+      stroke: #ffffff;
+    }
+  }
+}
+
+.thumb {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 64px 1fr 32px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: background 180ms ease;
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  :root[data-theme="dark"] & {
+
+    &:hover,
+    &:focus-visible {
+      background: rgba(255, 255, 255, 0.06);
+    }
+  }
+
+  img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+  }
+}
+
+.thumb-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.meta {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+// Chevron icon state
+.chevron {
+  color: $active;
+  transform: rotate(-90deg);
+  transition: transform 200ms ease, filter 200ms ease;
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+}
+
+.chev-bg {
+  fill: transparent;
+  stroke: var(--primary);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: fill 200ms ease, stroke 200ms ease;
+}
+
+.chev-arrow {
+  stroke: var(--primary);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+// Right panel
+.details {
+  background: var(--panel);
+  color: var(--ink);
+  border-radius: 4px;
+  padding: 16px;
+  @include card-shadow;
+  display: flex;
+  align-items: stretch;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: 100%;
+
+  @media (min-width: 760px) {
+    grid-template-columns: 1.1fr 1.2fr;
+    gap: 20px;
+  }
+}
+
+.media {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero {
+  max-width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  animation: fadeIn 300ms ease both;
+
+  @media (min-width: 1120px) {
+    max-height: 420px;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  display: none;
+}
+
+.category {
+  margin: 0;
+  color: var(--muted);
+}
+
+.price {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.rating {
+  margin: 0;
+  color: #f59e0b;
+}
+
+.muted {
+  color: #9ca3af;
+}
+
+.desc {
+  margin: 8px 0 0;
+  color: var(--ink);
+  line-height: 1.55;
+  opacity: 0.9;
+}
+
+.actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  @include button-elevate;
+}
+
+.placeholder {
+  color: #111827;
+  opacity: 0.7;
+}
+
+.footer {
+  padding: 20px;
+  color: var(--ink);
+  text-align: center;
+}
+
+.footer .theme-toggle {
+  display: inline-block;
+}
+
+.skeleton-list {
+  padding: 12px;
+  color: #d1d5db;
+}
+
+.error {
+  padding: 12px;
+  background: #fee2e2;
+  color: #7f1d1d;
+  border-radius: 8px;
+}
+
+/* Visually hidden yet still present for SEO and SR users */
+.visually-hidden {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
